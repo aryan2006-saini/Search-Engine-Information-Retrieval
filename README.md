@@ -35,11 +35,3 @@ Below are the key code segments used in this project, explained in one line as p
 | `start = html.find(">") + 1` | Manually finds the end of an HTML tag to extract only the visible text content. |
 
 ---
-
-## 🚀 How to Use
-
-### 1. Web Scraper
-Extract title and body text without using BeautifulSoup:
-```python
-import scraper
-scraper.get_title("[https://example.com](https://example.com)")
