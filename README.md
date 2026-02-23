@@ -1,49 +1,45 @@
-# Web Tools: Scraper & Content Similarity (SimHash)
+# Web Intelligence Tools: Scraper & SimHash Similarity
 
-This repository features two Python-based projects: a manual HTML scraper and a content similarity detector using the SimHash algorithm. These tools are designed to extract data and compare the uniqueness of different web pages.
+This repository contains two Python projects for automated web data extraction and content similarity analysis. These tools use manual HTML parsing and the **SimHash algorithm** powered by **Polynomial Rolling Hashing**.
 
 ## 📚 Documentation & References
 
-In the development of these projects, the following documentation was used for handling HTTP requests and implementing core logic:
+The following resources and mathematical principles were instrumental in the development of these tools:
+* **[Requests: Quickstart](https://requests.readthedocs.io/en/latest/user/quickstart/)**: Used for handling HTTP requests and retrieving HTML content efficiently.
+* **Polynomial Hashing**: Used to generate 64-bit fingerprints for text data to minimize collisions.
 
-1.  **[Requests: Quickstart](https://requests.readthedocs.io/en/latest/user/quickstart/)**: Used for managing network requests and retrieving HTML content from URLs.
-2.  **SimHash Logic**: Used for implementing the fingerprinting and hashing algorithm.
+### The Polynomial Hash Function
+In this project, the `simple_hash64` function implements a polynomial rolling hash (specifically a BKDR-style hash). The mathematical formula used is:
 
----
+$$H = (s[0] \cdot P^{n-1} + s[1] \cdot P^{n-2} + \dots + s[n-1] \cdot P^0) \pmod M$$
 
-## 🚀 Projects Overview
+Where:
+* **$P$ (Base)** is `131` (a prime number used to reduce collisions).
+* **$s[i]$** is the integer value (`ord`) of the character at position $i$.
+* **$M$ (Modulo)** is $2^{64}$ to ensure the result fits a 64-bit integer.
 
-### 1. Web Scraper (`scraper.py`)
-A lightweight scraper that performs manual string parsing to extract data without the need for external libraries like BeautifulSoup.
-* **Title Extraction:** Pinpoints and extracts the `<title>` tag content.
-* **Body Content Parsing:** Iteratively traverses the HTML structure to isolate visible text.
-* **Link Finder:** Scans the source for all `https://` occurrences to list outbound links.
 
-### 2. Web Similarity Detector (`web_similarity_simhash.py`)
-A tool that calculates the percentage of similarity between two websites using a 64-bit SimHash fingerprint.
-* **Tokenization:** Breaks down raw text into individual alphanumeric words.
-* **N-gram Generation:** Creates word sequences to capture the context of the page.
-* **Bitwise Hashing:** Generates a unique signature to compare large amounts of text efficiently.
 
 ---
 
 ## 🛠️ Logic & Code Explanation
 
-Below are specific snippets from the code used in this project, explained in one line as per the implementation logic:
+Below are the key code segments used in this project, explained in one line as per the implementation logic:
 
-| Code Snippet | Explanation |
+| Code Snippet | Logic Explanation |
 | :--- | :--- |
-| `r = requests.get(url)` | Uses the **Requests library** to fetch the complete source code of a webpage. |
-| `h = (h * 131 + ord(ch)) % (2**64)` | Generates a unique 64-bit hash value for words using a prime multiplier for better distribution. |
-| `if (h >> i) & 1 == 1: bits[i] += 1` | Checks individual bits of a hash to build the weighted SimHash vector. |
-| `gram = words[i] + " " + words[i+1] + " " + words[i+2]` | Combines three consecutive words into an n-gram to preserve the structural meaning of the text. |
-| `start = html_info.find(">") + 1` | Finds the exact starting position of text immediately following an HTML closing bracket. |
+| `r = requests.get(url)` | Fetches the raw HTML data from a website using the **Requests library**. |
+| `h = (h * 131 + ord(ch)) % (2**64)` | Implements the **Polynomial Hash** to create a unique 64-bit ID for each word or n-gram. |
+| `if (h >> i) & 1 == 1: bits[i] += 1` | Performs bitwise shifting to check each bit and update the SimHash weight vector. |
+| `gram = words[i] + " " + words[i+1] + " " + words[i+2]` | Creates 3-grams to ensure the similarity check considers word order, not just individual words. |
+| `start = html.find(">") + 1` | Manually finds the end of an HTML tag to extract only the visible text content. |
 
 ---
 
-## ⚙️ Installation & Usage
+## 🚀 How to Use
 
-### Setup
-Ensure you have the `requests` library installed:
-```bash
-pip install requests
+### 1. Web Scraper
+Extract title and body text without using BeautifulSoup:
+```python
+import scraper
+scraper.get_title("[https://example.com](https://example.com)")
