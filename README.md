@@ -1,5 +1,3 @@
-# Search-Engine-Information-Retrieval
-
 # Web Tools: Scraper & Content Similarity (SimHash)
 
 This repository features two Python-based projects: a manual HTML scraper and a content similarity detector using the SimHash algorithm. These tools are designed to extract data and compare the uniqueness of different web pages.
